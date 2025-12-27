@@ -1,4 +1,4 @@
-def call(String project, String imageTag) {
+def call(String project, String imageTag, String dockerHubCreds) {
 
     echo "Pushing Docker image to Docker Hub"
 
