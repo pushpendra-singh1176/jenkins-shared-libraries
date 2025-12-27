@@ -1,8 +1,18 @@
-def call(String Project, String ImageTag, String dockerhubUser) {
-         echo "Pushing Docker image to Docker Hub"
-         withCredentials([usernamePassword(credentialsId: "dockerHubCreds", 
-                          usernameVariable: "dockerHubUser", 
-                          passwordVariable: "dockerHubPass" )])
-        sh "docker login -u "${dockerHubUser}" -p "${dockerHubPass}" "
+def call(String project, String imageTag) {
+
+    echo "Pushing Docker image to Docker Hub"
+
+    withCredentials([
+        usernamePassword(
+            credentialsId: 'dockerHubCreds',
+            usernameVariable: 'DOCKER_USER',
+            passwordVariable: 'DOCKER_PASS'
+        )
+    ]) {
+        sh """
+            echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+            docker tag ${project}:${imageTag} \$DOCKER_USER/${project}:${imageTag}
+            docker push \$DOCKER_USER/${project}:${imageTag}
+        """
+    }
 }
-        sh "docker push "${dockerHubUser}"/"{Project}":"{ImageTag}" "
